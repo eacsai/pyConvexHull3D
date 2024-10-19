@@ -1,5 +1,4 @@
 *.pyc
-*.ipynb
 time_test.py
 .ipynb_checkpoints/
 frames/

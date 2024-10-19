@@ -1,7 +1,6 @@
 """
 Provides DCEL (dict-based), Vertex, hEdge, and Face classes. Python 3.6 is strongly recommended.
 
-Adapted from list-based python 2.7 implementation at: https://github.com/Ylannl/pydcel
 """
 import numpy as np
 from operator import add, sub

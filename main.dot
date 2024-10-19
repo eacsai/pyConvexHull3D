@@ -1,0 +1,19 @@
+digraph ConvexHull3D {
+    node [shape=record];
+
+    ConvexHull3D [label="{ConvexHull3D | { +runAlgorithm() | +insertPoint() | +updateHull() }}"];
+
+    DCEL [label="{DCEL | { +createVertex() | +createHedge() | +createFace() }}"];
+
+    Vertex [label="Vertex"];
+    hEdge [label="hEdge"];
+    Face [label="Face"];
+
+    ConvexHull3D -> DCEL [label="uses"];
+    DCEL -> Vertex [label="creates"];
+    DCEL -> hEdge [label="creates"];
+    DCEL -> Face [label="creates"];
+    hEdge -> Vertex [label="has"];
+    hEdge -> Face [label="belongs to"];
+    Face -> hEdge [label="loops around"];
+}

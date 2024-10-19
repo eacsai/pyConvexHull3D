@@ -14,22 +14,6 @@ def colinear(p0, p1, p2):
 def coplanar(p1, p2, p3, p0):
     return dot(cross(p1-p0, p2-p1), p0-p3) == 0
 
-def preprocess(pts):
-    """Assumes pts is an np.array with shape (n, 3).
-       Removes duplicate points.
-       Swaps (unique) rows to front like [xmax, xmin, ymax, ymin, zmax, zmin]  
-    """
-    pts = unique(pts, axis=0)
-    pts = array(sample(list(pts), len(pts)))
-    pts[[0, pts[:,0].argmax()]]  = pts[[pts[:,0].argmax(), 0]]
-    pts[[1, pts[1:,0].argmin()+1]] = pts[[pts[1:,0].argmin()+1, 1]]
-    pts[[2, pts[2:,1].argmax()+2]] = pts[[pts[2:,1].argmax()+2, 2]]
-    pts[[3, pts[3:,1].argmin()+3]] = pts[[pts[3:,1].argmin()+3, 3]]
-    if len(pts) > 4:
-        pts[[4, pts[4:,2].argmax()+4]] = pts[[pts[4:,2].argmax()+4, 4]]
-    if len(pts) > 5:
-        pts[[5, pts[5:,2].argmin()+5]] = pts[[pts[5:,2].argmin()+5, 5]]
-    return pts
 
 
 class ConvexHull3D():
@@ -43,7 +27,7 @@ class ConvexHull3D():
             make_frames=False : set True to output png frames at each step to frame_dir
             frames_dir='./frames/' : set to change dir where frames are saved
     '''
-    def __init__(self, pts, run=True, preproc=False, make_frames=False, frames_dir='./frames/'):
+    def __init__(self, pts, run=True, make_frames=False, frames_dir='./frames/'):
         """Creates initial 4-vertex polyhedron."""
         assert pts.shape[1] == 3
         assert len(pts) > 3
@@ -54,12 +38,9 @@ class ConvexHull3D():
             self.frames_dir = frames_dir
             self.frames_count = 0
 
-        if preproc:
-            self.pts = preprocess(pts)
-        else:
-            self.pts = unique(pts, axis=0)
-            # random array gets sorted by unique
-            self.pts = array(sample(list(self.pts), len(self.pts)))
+        self.pts = unique(pts, axis=0)
+        # random array gets sorted by unique
+        self.pts = array(sample(list(self.pts), len(self.pts)))
 
         self.boxmax, self.boxmin = pts.max(), pts.min()
 
@@ -222,7 +203,7 @@ class ConvexHull3D():
         if self.make_frames: self.generateImage()
         return 
 
-    def runAlgorithm(self, make_frames=False):
+    def runAlgorithm(self):
         for i, pt in enumerate(self.pts[4:]):
             self.insertPoint(pt, i)
         return
@@ -232,10 +213,16 @@ class ConvexHull3D():
 
     def generateImage(self, newPt=None, show=False):
         """Plot all the faces and vertices on a 3D axis"""
-        ax = mpl3D.Axes3D(plt.figure(figsize=[20,15]))
+        if newPt is not None:
+            print("Generating frame ", self.frames_count)
+        fig = plt.figure(figsize=[20, 15])  # 创建图形窗口
+        ax = fig.add_subplot(111, projection='3d')  # 在图形窗口中添加三维坐标轴
         ax.set_xlim([self.boxmin,self.boxmax])
         ax.set_ylim([self.boxmin,self.boxmax])
         ax.set_zlim([self.boxmin,self.boxmax])
+        ax.set_xlabel('X Label')
+        ax.set_ylabel('Y Label')
+        ax.set_zlabel('Z Label')
 
         vertices = array([list(v.p()) for v in self.DCEL.vertexDict.values()])
         if newPt is not None: vertices = append(vertices, array([newPt]), axis=0)

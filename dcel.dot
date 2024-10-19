@@ -1,0 +1,44 @@
+digraph DCEL {
+    node [shape=rectangle];
+    
+    DCEL -> vertexDict [label="vertexDict"];
+    DCEL -> hedgeDict [label="hedgeDict"];
+    DCEL -> faceDict [label="faceDict"];
+    DCEL -> infiniteFace [label="infiniteFace"];
+
+    vertexDict -> Vertex;
+    hedgeDict -> hEdge;
+    faceDict -> Face;
+
+    subgraph cluster_vertex {
+        label="Vertex";
+        identifier1 [label="identifier"];
+        incidentEdge [label="incidentEdge"];
+        Vertex -> identifier1;
+        Vertex -> incidentEdge;
+    }
+
+    subgraph cluster_hedge {
+        label="hEdge";
+        identifier2 [label="identifier"];
+        origin [label="origin"];
+        twin [label="twin"];
+        incidentFace [label="incidentFace"];
+        previous [label="previous"];
+        next [label="next"];
+        hEdge -> identifier2;
+        hEdge -> origin;
+        hEdge -> twin;
+        hEdge -> incidentFace;
+        hEdge -> previous;
+        hEdge -> next;
+    }
+
+    subgraph cluster_face {
+        label="Face";
+        identifier3 [label="identifier"];
+        edgeComponent [label="edgeComponent"];
+        Face -> identifier3;
+        Face -> edgeComponent;
+    }
+}
